@@ -1,0 +1,64 @@
+% Базовые факты и фреймы
+
+% Уровень 1: Корневой класс
+class(кулинария).
+
+% Уровень 2: Основные категории
+subclass(блюдо, кулинария).
+subclass(ингредиент, кулинария).
+subclass(процесс_приготовления, кулинария).
+
+% Уровень 3: Конкретные классы
+subclass(блюдо_первое, блюдо).
+subclass(блюдо_второе, блюдо).
+subclass(десерт, блюдо).
+subclass(овощ, ингредиент).
+subclass(мясо, ингредиент).
+subclass(специя, ингредиент).
+subclass(термообработка, процесс_приготовления).
+
+% Экземпляры (инстансы)
+instance(борщ, блюдо_первое).
+instance(котлета, блюдо_второе).
+instance(торт, десерт).
+instance(картофель, овощ).
+instance(говядина, мясо).
+instance(соль, специя).
+
+slot(блюдо, ингредиенты, []).
+slot(блюдо, время_приготовления, неизвестно).
+slot(блюдо, способ_приготовления, неизвестно).
+
+slot_value(борщ, ингредиенты, [картофель, говядина, соль]).
+slot_value(котлета, ингредиенты, [говядина, соль]).
+slot_value(торт, ингредиенты, [сахар, мука]).
+
+% Процедуры
+
+check_ingredients(Dish, Ing) :-
+    slot_value(Dish, ингредиенты, Ingredients),
+    member(Ing, Ingredients),
+    write('Ингредиент '), write(Ing), write(' присутствует в блюде '), write(Dish).
+
+default_cooking_time(Dish, Time) :-
+    subclass(Class, блюдо),
+    instance(Dish, Class),
+    (Class = блюдо_первое -> Time = 60;
+     Class = блюдо_второе -> Time = 45;
+     Class = десерт -> Time = 90),
+    write('Типичное время приготовления для '), write(Dish), write(': '), write(Time), write(' минут'), nl.
+
+if_needed_cooking_method(Dish, Method) :-
+    subclass(Class, блюдо),
+    instance(Dish, Class),
+    (Class = блюдо_первое -> Method = варка;
+     Class = блюдо_второе -> Method = жарка;
+     Class = десерт -> Method = выпечка),
+    write('Рекомендуемый способ приготовления для '), write(Dish), write(': '), write(Method), nl.
+
+% Примеры запросов
+% ?- check_ingredients(борщ, говядина).
+% ?- default_cooking_time(борщ, Time).
+% ?- if_needed_cooking_method(торт, Method).
+% ?- check_ingredients(_, говядина).
+% ? - default_cooking_time(борщ, _)
